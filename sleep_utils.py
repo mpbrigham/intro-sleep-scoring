@@ -61,9 +61,10 @@ def load_dataset(path, channels=None, exclude=None, verbose=True):
     return dataset
 
 
-def plot_stats(dataset, x_min=-1, x_max=1, x_n=5e4):
+def plot_stats(dataset, channels, x_min=-1, x_max=1, x_n=5e4):
     """Plot per channel histograms of dataset.
-    dataset: dictionary with dataset, PSG channels with shape (batch, channel, data).
+    dataset: dictionary with dataset, PSG channels with shape (batch, channel, data)
+    channels: list with channel names
     """ 
 
     x_bins = np.linspace(x_min, x_max, num=100)
