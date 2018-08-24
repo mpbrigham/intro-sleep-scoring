@@ -1,3 +1,4 @@
+import numpy as np
 import os
 import h5py
 
@@ -61,9 +62,9 @@ def load_dataset(path, channels=None, exclude=None, verbose=True):
 
 
 def plot_stats(dataset, x_min=-1, x_max=1, x_n=5e4):
-  """Plot per channel histograms of dataset.
-  dataset: dictionary with dataset, PSG channels with shape (batch, channel, data).
-  """ 
+    """Plot per channel histograms of dataset.
+    dataset: dictionary with dataset, PSG channels with shape (batch, channel, data).
+    """ 
 
     x_bins = np.linspace(x_min, x_max, num=100)
     n_channels = len(channels)
@@ -96,16 +97,16 @@ def plot_stats(dataset, x_min=-1, x_max=1, x_n=5e4):
 
 
 def print_stats(x, name='EEG'):
-  """Print minimum, maximum, mean and standard deviation 
-  along dimension 0 of array.
-  x: array with shape (batch, channel, data)
-  """
+    """Print minimum, maximum, mean and standard deviation 
+    along dimension 0 of array.
+    x: array with shape (batch, channel, data)
+    """
 
-  print(name+'\t min\t\t max\t\t mean\t\t std\n')
+    print(name+'\t min\t\t max\t\t mean\t\t std\n')
 
-  for idx in range(x.shape[1]):
-    print(idx, 
-          '\t', '{0:.4f}'.format(np.min(x[:,idx])), 
-          '\t', '{0:.4f}'.format(np.max(x[:,idx])), 
-          '\t', '{0:.4f}'.format(np.mean(x[:,idx])), 
-          '\t', '{0:.4f}'.format(np.std(x[:,idx])))
+    for idx in range(x.shape[1]):
+        print(idx, 
+            '\t', '{0:.4f}'.format(np.min(x[:,idx])), 
+            '\t', '{0:.4f}'.format(np.max(x[:,idx])), 
+            '\t', '{0:.4f}'.format(np.mean(x[:,idx])), 
+            '\t', '{0:.4f}'.format(np.std(x[:,idx])))
