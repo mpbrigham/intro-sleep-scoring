@@ -4,10 +4,10 @@ import os
 import h5py
 
 
-def load_dataset(path, exclude=None, channels_ref=None, verbose=True):
+def load_dataset(path, exclude_record=None, channels_ref=None, verbose=True):
     """Import HDF5 databases from path.
     path: path of folder containing HDF5 databases
-    exclude: list of databases to exclude
+    exclude_record: list of databases to exclude
     channels_ref: list of channels to include
     verbose: extensive reporting
 
@@ -62,28 +62,32 @@ def load_dataset(path, exclude=None, channels_ref=None, verbose=True):
     return dataset
 
 
-def plot_stats(dataset, channels_ref=None, x_min=-1, x_max=1, x_n=5e4):
+def plot_stats(dataset, exclude_record=None, x_min=-1, x_max=1, x_n=5e4):
     """Plot per channel histograms of PSG record in dataset.
     dataset: dataset dictionary with PSG channels with shape (batch, channel, data)
-    channels_ref: list with channel names
+    exclude_record: list with records to exclude
+    exclude_channel: list with channels to exclude
     x_min: x-axis minimum value
     x_max: x-axis maximum value
     x_n: number of samples for histogram
-    """ 
+    """
 
-    x_bins = np.linspace(x_min, x_max, num=100)
+    dataset_keys = list(dataset.keys())
+    if exclude_record is not None:
+        dataset_keys = [key for key in dataset_keys
+                            if key not in exclude_record]
 
-    if channels_ref is None:
-        key_ref.dataset.keys()[0]
-        channels_ref = dataset][jey_ref]['channels']
+    channels_ref = dataset[dataset_keys[0]]['channels_ref']
 
     n_channels = len(channels_ref)
+    
+    x_bins = np.linspace(x_min, x_max, num=100)
 
     fig, axs = plt.subplots(1, n_channels, figsize=(6*n_channels,3))
 
-    for idx_record_id, record_id in dataset:
+    for idx_record_id, record_id in enumerate(dataset_keys):
 
-        for idx_channel, channel in enumerate(channels):
+        for idx_channel, channel in enumerate(channels_ref):
 
             data = dataset[record_id]['channels'][:,idx_channel].flatten()
             
@@ -108,8 +112,6 @@ def plot_stats(dataset, channels_ref=None, x_min=-1, x_max=1, x_n=5e4):
     plt.tight_layout()
     fig.canvas.draw()
 
-    return fig, axs
-    
 
 def print_stats(x, name='EEG'):
     """Print minimum, maximum, mean and standard deviation 
