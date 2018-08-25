@@ -4,11 +4,12 @@ import os
 import h5py
 
 
-def load_dataset(path, exclude_record=None, channels_ref=None, verbose=True):
+def load_dataset(path, exclude_record=None, channels_ref=None, remove_mean=False, verbose=True):
     """Import HDF5 databases from path.
     path: path of folder containing HDF5 databases
     exclude_record: list of databases to exclude
     channels_ref: list of channels to include
+    remove_mean: remove mean channel value
     verbose: extensive reporting
 
     returns dataset: dictionary with contents of HDF5 databases in each key,
@@ -43,6 +44,9 @@ def load_dataset(path, exclude_record=None, channels_ref=None, verbose=True):
                 data = f[channel][::]
                 data = data[:, np.newaxis, :]
                 
+                if remove_mean:
+                    data = data - np.mean(data)
+
                 if idx_channel==0:
                     x = data
                 else:
@@ -67,7 +71,6 @@ def plot_stats(dataset, exclude_record=None, remove_mean=False,
     """Plot per channel histograms of PSG record in dataset.
     dataset: dataset dictionary with PSG channels with shape (batch, channel, data)
     exclude_record: list with records to exclude
-    remove_mean: remove mean channel value
     x_min: x-axis minimum value
     x_max: x-axis maximum value
     x_n: number of samples for histogram
@@ -91,9 +94,6 @@ def plot_stats(dataset, exclude_record=None, remove_mean=False,
         for idx_channel, channel in enumerate(channels_ref):
 
             data = dataset[record_id]['channels'][:,idx_channel].flatten()
-            
-            if remove_mean:
-                data = data - np.mean(data)
 
             if data.shape[0]>=x_n:
                 data = np.random.choice(data, size=int(x_n), replace=False)
