@@ -77,10 +77,10 @@ def plot_stats(record, channels_ref=None, x_min=-1, x_max=1, x_n=5e4):
 
     fig, axs = plt.subplots(1, n_channels, figsize=(6*n_channels,3))
 
-    for key_idx, key in enumerate(dataset):
-
     for channel_idx, channel in enumerate(channels):
+
         data = dataset[key]['channels'][:,channel_idx].flatten()
+        
         if data.shape[0]>=x_n:
             data = np.random.choice(data, size=int(x_n), replace=False)
         
