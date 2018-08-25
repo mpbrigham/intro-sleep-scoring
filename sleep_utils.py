@@ -62,11 +62,12 @@ def load_dataset(path, exclude_record=None, channels_ref=None, verbose=True):
     return dataset
 
 
-def plot_stats(dataset, exclude_record=None, x_min=-1, x_max=1, y_max=None, x_n=5e4):
+def plot_stats(dataset, exclude_record=None, remove_mean=False, 
+        x_min=-1, x_max=1, y_max=None, x_n=5e4):
     """Plot per channel histograms of PSG record in dataset.
     dataset: dataset dictionary with PSG channels with shape (batch, channel, data)
     exclude_record: list with records to exclude
-    exclude_channel: list with channels to exclude
+    remove_mean: remove mean channel value
     x_min: x-axis minimum value
     x_max: x-axis maximum value
     x_n: number of samples for histogram
@@ -91,6 +92,9 @@ def plot_stats(dataset, exclude_record=None, x_min=-1, x_max=1, y_max=None, x_n=
 
             data = dataset[record_id]['channels'][:,idx_channel].flatten()
             
+            if remove_mean:
+                data = data - np.mean(data)
+
             if data.shape[0]>=x_n:
                 data = np.random.choice(data, size=int(x_n), replace=False)
             
