@@ -102,7 +102,7 @@ def plot_stats(dataset, exclude_record=None, x_min=-1, x_max=1, x_n=5e4):
             plt.sca(axs[idx_channel])           
             plt.hist(data, bins=x_bins, density=True, alpha=0.4, label=label)
 
-            if record_id==0:
+            if idx_record_id==0:
                 plt.title('Histogram '+channel)
 
     plt.sca(axs[0])
