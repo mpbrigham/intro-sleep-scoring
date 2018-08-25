@@ -4,11 +4,12 @@ import os
 import h5py
 
 
-def load_dataset(path, channels=None, exclude=None, verbose=True):
+def load_dataset(path, exclude=None, channels_ref=None, verbose=True):
     """Import HDF5 databases from path.
     path: path of folder containing HDF5 databases
-    channels: list of channels to include
     exclude: list of databases to exclude
+    channels_ref: list of channels to include
+
     verbose: extensive reporting
 
     returns dataset: dictionary with contents of HDF5 databases in each key,
@@ -38,7 +39,7 @@ def load_dataset(path, channels=None, exclude=None, verbose=True):
             if verbose:
                 print(record_id)
                 
-            for channel_idx, channel in enumerate(channels):
+            for channel_idx, channel in enumerate(channels_ref):
               
                 data = f[channel][::]
                 data = data[:, np.newaxis, :]
@@ -51,8 +52,8 @@ def load_dataset(path, channels=None, exclude=None, verbose=True):
             y = np.array([f['stages'][::]]).T
 
             dataset[record_id] = {'path': record_path,
-                                  'channels': channels,
-                                  'samples': x,
+                                  'channels_ref': channels_ref,
+                                  'channels': x,
                                   'hypnogram': y
                                  }
             
@@ -62,37 +63,41 @@ def load_dataset(path, channels=None, exclude=None, verbose=True):
     return dataset
 
 
-def plot_stats(dataset, channels, x_min=-1, x_max=1, x_n=5e4):
-    """Plot per channel histograms of dataset.
-    dataset: dictionary with dataset, PSG channels with shape (batch, channel, data)
-    channels: list with channel names
+def plot_stats(record, channels_ref=None, x_min=-1, x_max=1, x_n=5e4):
+    """Plot per channel histograms of PSG record.
+    record: dictionary with PSG channels with shape (batch, channel, data)
+    channels_ref: list with channel names
     """ 
 
     x_bins = np.linspace(x_min, x_max, num=100)
-    n_channels = len(channels)
+    if channels_ref is None:
+        n_channels = record['channels'].shape[1]
+    else:
+        n_channels = len(channels_ref)
 
     fig, axs = plt.subplots(1, n_channels, figsize=(6*n_channels,3))
 
     for key_idx, key in enumerate(dataset):
 
-        for channel_idx, channel in enumerate(channels):
-            data = dataset[key]['samples'][:,channel_idx].flatten()
-            if data.shape[0]>=x_n:
-                data = np.random.choice(data, size=int(x_n), replace=False)
-            
-            if channel_idx==0:
-                label=key
-            else:
-                label=None            
+    for channel_idx, channel in enumerate(channels):
+        data = dataset[key]['channels'][:,channel_idx].flatten()
+        if data.shape[0]>=x_n:
+            data = np.random.choice(data, size=int(x_n), replace=False)
+        
+        if channel_idx==0:
+            label=key
+        else:
+            label=None            
 
-            plt.sca(axs[channel_idx])           
-            plt.hist(data, bins=x_bins, density=True, alpha=0.4, label=label)
+        plt.sca(axs[channel_idx])           
+        plt.hist(data, bins=x_bins, density=True, alpha=0.4, label=label)
 
-            if key_idx==0:
-                plt.title('Histogram '+channel)
+        if key_idx==0:
+            plt.title('Histogram '+channel)
 
     plt.sca(axs[0])
     plt.ylabel('Density')
+    plt.xlabel('Amplitude')
     plt.legend()
     plt.tight_layout()
     fig.canvas.draw()
