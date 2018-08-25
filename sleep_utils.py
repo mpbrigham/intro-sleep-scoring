@@ -70,7 +70,7 @@ def plot_stats(dataset, exclude_record=None, remove_mean=False,
         x_min=-1, x_max=1, y_max=None, x_n=5e4):
     """Plot per channel histograms of PSG record in dataset.
     dataset: dataset dictionary with PSG channels with shape (batch, channel, data)
-    exclude_record: list with records to exclude
+    exclude_record: list of records to exclude
     x_min: x-axis minimum value
     x_max: x-axis maximum value
     x_n: number of samples for histogram
