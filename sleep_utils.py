@@ -62,7 +62,7 @@ def load_dataset(path, exclude_record=None, channels_ref=None, verbose=True):
     return dataset
 
 
-def plot_stats(dataset, exclude_record=None, x_min=-1, x_max=1, x_n=5e4):
+def plot_stats(dataset, exclude_record=None, x_min=-1, x_max=1, y_max=None, x_n=5e4):
     """Plot per channel histograms of PSG record in dataset.
     dataset: dataset dictionary with PSG channels with shape (batch, channel, data)
     exclude_record: list with records to exclude
@@ -104,6 +104,8 @@ def plot_stats(dataset, exclude_record=None, x_min=-1, x_max=1, x_n=5e4):
 
             if idx_record_id==0:
                 plt.title('Histogram '+channel)
+                if y_max is not None:
+                    plt.ylim([0,y_max])
 
     plt.sca(axs[0])
     plt.ylabel('Density')
