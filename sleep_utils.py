@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import h5py
-
+from IPython.core.display import HTML
 
 def load_dataset(path, exclude_record=None, channels_ref=None, remove_mean=False, verbose=True):
     """Import HDF5 databases from path.
@@ -66,11 +66,12 @@ def load_dataset(path, exclude_record=None, channels_ref=None, remove_mean=False
     return dataset
 
 
-def plot_stats(dataset, exclude_record=None, remove_mean=False, 
+def plot_stats(dataset, exclude_record=None, title=None,
         x_min=-1, x_max=1, y_max=None, x_n=5e4):
     """Plot per channel histograms of PSG record in dataset.
     dataset: dataset dictionary with PSG channels with shape (batch, channel, data)
     exclude_record: list of records to exclude
+    Title: global title
     x_min: x-axis minimum value
     x_max: x-axis maximum value
     x_n: number of samples for histogram
@@ -86,6 +87,9 @@ def plot_stats(dataset, exclude_record=None, remove_mean=False,
     n_channels = len(channels_ref)
     
     x_bins = np.linspace(x_min, x_max, num=100)
+
+    if title is not None:
+        display(HTML('<h2>'+title+'</h2>'))
 
     fig, axs = plt.subplots(1, n_channels, figsize=(6*n_channels,3))
 
