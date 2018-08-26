@@ -88,10 +88,10 @@ def plot_stats(dataset, exclude_record=None, title=None,
     
     x_bins = np.linspace(x_min, x_max, num=100)
 
-    if title is not None:
-        display(HTML('<h2>'+title+'</h2>'))
-
     fig, axs = plt.subplots(1, n_channels, figsize=(6*n_channels,3))
+
+    if title is not None:
+        fig.suptitle(title)
 
     for idx_record_id, record_id in enumerate(dataset_keys):
 
