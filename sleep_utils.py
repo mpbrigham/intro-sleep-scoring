@@ -43,8 +43,8 @@ def load_dataset(path, exclude_record=None, channels_ref=None, verbose=True):
 
         with h5py.File(record_path, 'r') as f:
 
-        if channels_ref is None:
-            channels_ref = list(f.keys())
+            if channels_ref is None:
+                channels_ref = list(f.keys())
 
             if verbose:
                 print(record_id)
