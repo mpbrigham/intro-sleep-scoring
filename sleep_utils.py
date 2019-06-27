@@ -98,70 +98,7 @@ def to_output(u, num_classes=5):
     u_out = keras.utils.to_categorical(u, num_classes=num_classes)
     
     return u_out
-
-  
-class PSGSequence(keras.preprocessing.sequence.Sequence):
     
-    def __init__(self, dataset, records=None, epochs_bool=None, batch_size=32,
-                 tensor=False, process_input=to_input, process_output=to_output):
-    
-        self.dataset = dataset
-        self.records = records
-        self.epochs_bool = epochs_bool
-        self.batch_size = batch_size
-        self.tensor = tensor
-        self.process_input = process_input
-        self.process_output = process_output
-
-        if self.records is None:
-
-            self.records = list(self.dataset.keys())
-            self.epochs_bool = None
-
-        if self.epochs_bool is None:
-
-            self.epochs_bool = [np.array([True]*self.dataset[record]['hypnogram'].shape[0])
-                                for record in self.records]
-
-        self.records_epochs = []
-        for idx_record, record in enumerate(self.records):
-            epochs, = np.where(self.epochs_bool[idx_record])
-            self.records_epochs += [[idx_record, epoch] for epoch in epochs]
-                                
-        self.on_epoch_end()
-                                
-        self.epochs_n = len(self.records_epochs)
-        
-        x_batch, y_batch = self.__getitem__(0)
-        
-        self.x_batch_shape = x_batch.shape
-        self.y_batch_shape = y_batch.shape
-        
-    def on_epoch_end(self):
-        
-        random.shuffle(self.records_epochs)
-        
-    def __len__(self):
-        
-        return int(np.ceil(self.epochs_n / float(self.batch_size)))
-    
-    def __getitem__(self, idx):
-        
-        records_epochs_batch =  self.records_epochs[idx 
-                                                    * self.batch_size:(idx + 1) 
-                                                    * self.batch_size]
-                                
-        x_batch, y_batch = ([],[])
-        
-        for idx_record, epoch in records_epochs_batch:
-          
-            record = self.records[idx_record]
-            x_batch += [self.dataset[record]['channels'][epoch]]
-            y_batch += [self.dataset[record]['hypnogram'][epoch]]
-        
-        return (self.process_input(np.array(x_batch), tensor=self.tensor),
-                self.process_output(np.array(y_batch)))
-      
   
 def cross_validation(dataset, model_ref,
                      tensor=False, epochs=10,  batch_size=128, 
