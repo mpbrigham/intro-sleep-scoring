@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import random
+import h5py
 
 
 metrics_short_ref = {'loss': 'Loss', 
